@@ -1,7 +1,7 @@
 
 using Pkg
 Pkg.instantiate()
-Pkg.activate(".")
+Pkg.activate("..")
 
 using DelimitedFiles, Plots, Printf
 
