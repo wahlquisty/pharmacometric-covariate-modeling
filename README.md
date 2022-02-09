@@ -7,7 +7,6 @@ The package is written in Julia and can be downloaded by running
 
 ```
 Pkg.add(url="https://github.com/wahlquisty/pharmacometric-covariate-modeling.jl")
-
 ```
 
 ## Usage
