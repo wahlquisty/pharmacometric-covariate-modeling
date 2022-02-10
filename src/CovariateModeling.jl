@@ -1,6 +1,6 @@
 
 using Pkg
-Pkg.instantiate()
+# Pkg.instantiate()
 Pkg.activate("..")
 
 using DelimitedFiles, Plots, Printf
@@ -48,33 +48,31 @@ delta = 1e-3 # limit for setting small weights and biases to zero
 
 
 ## Find expression for V1
-@time model, loss_final, training_loss_final, c = train_multipleinit(data_train_V1, learning_rate, n_epochs, n_success, seed, delta, n_final)
+@time model, c = train_multipleinit(data_train_V1, learning_rate, n_epochs, n_success, seed, delta, n_final)
 print("Max 12 parameters, expression for V1: ")
 exprV1 = find_expr(c, max_V1) # Find symbolic expression after training
 
 # Plot result
 # fit_scatter(data_train_V1, max_V1) # Scatter plot
-p_V1 = fit_function(fV1, exprV1, 1) # Function plot compared to training data
+p_V1 = fit_function(exprV1, 1) # Function plot compared to training data
 
 # Find expression for V2
-@time model, loss_final, training_loss_final, c = train_multipleinit(data_train_V2, learning_rate, n_epochs, n_success, seed, delta, n_final)
+@time model, c = train_multipleinit(data_train_V2, learning_rate, n_epochs, n_success, seed, delta, n_final)
 print("Max 12 parameters, expression for V2: ")
 exprV2 = find_expr(c, max_V2) # Find symbolic expression after training
 
 # Plot result
 # fit_scatter(data_train_V2, max_V2) # Scatter plot
-p_V2 = fit_function(fV2, exprV2, 2) # Function plot compared to training data
-
+p_V2 = fit_function(exprV2, 2) # Function plot compared to training data
 
 plot(p_V1, p_V2, layout = (2, 1), size = (600, 600))
-
 
 
 ## Reduced model size
 n_final = 6 # maximal final amount of parameters in the model (N_f in paper)
 
 # V1
-@time model, loss_final, training_loss_final, c = train_multipleinit(data_train_V1, learning_rate, n_epochs, n_success, seed, delta, n_final)
+@time model, c = train_multipleinit(data_train_V1, learning_rate, n_epochs, n_success, seed, delta, n_final)
 print("Max 6 parameters, expression for V1: ")
 exprV1 = find_expr(c, max_V1) # Find symbolic expression after training
 
@@ -84,7 +82,7 @@ exprV1 = find_expr(c, max_V1) # Find symbolic expression after training
 
 
 # V2
-@time model, loss_final, training_loss_final, c = train_multipleinit(data_train_V2, learning_rate, n_epochs, n_success, seed, delta, n_final)
+@time model, c = train_multipleinit(data_train_V2, learning_rate, n_epochs, n_success, seed, delta, n_final)
 print("Max 6 parameters, expression for V2: ")
 exprV2 = find_expr(c, max_V2) # Find symbolic expression after training
 
@@ -101,6 +99,7 @@ mu = 0 # parameter for logloss (amount)
 delta = 0 # limit for setting small weights and biases to zero
 
 @time model, loss_final, training_loss_final, c = train_multipleinit(data_train_V2, learning_rate, n_epochs, n_success, seed, delta, Inf, false)
+print("No restriction on parameters, expression for V2: ")
 exprV2 = find_expr(c, max_V2) # Find symbolic expression after training
 
 # Plot result

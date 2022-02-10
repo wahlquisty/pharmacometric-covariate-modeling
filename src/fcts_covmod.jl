@@ -185,7 +185,7 @@ function setexp(layer, cexp)
     if sum(wm[2, :]) == 0 && (cexp == false) # if all weights are zero and functions has not yet been changed
         cexp = true
         model[layer].bias[2] = exp(model[layer].bias[2] .* model[layer].b_mask[2])
-        print("Set exp to 1 in layer ", layer, "\n")
+        # print("Set exp to 1 in layer ", layer, "\n")
     end
     return cexp
 end
@@ -236,7 +236,7 @@ function setdivision(layer, cdiv)
         if (cdiv1 == false && layer == 1) || (cdiv2 == false && layer == 2)
             model[layer].weight[5, :] .= model[layer].weight[5, :] ./ (sum(model[layer].weight[6, :] .* model[layer].W_mask[6, :]) + model[layer].bias[6] .* model[layer].b_mask[6])
             model[layer].bias[5] = model[layer].bias[5] ./ (sum(model[layer].weight[6, :] .* model[layer].W_mask[6, :]) + model[layer].bias[6] .* model[layer].b_mask[6])
-            print("Remove denominator in division in layer ", layer, "\n")
+            # print("Remove denominator in division in layer ", layer, "\n")
             model[layer].W_mask[6, :] .= 0.0
             model[layer].b_mask[6, :] .= 0.0
             model[layer].bias[6] = 1.0
@@ -350,7 +350,6 @@ function init_model(k)
     nd = 6 # nbr of input nodes to activation function
     nout = 1 # 2 # nbr of outputs
 
-    @show k
     Random.seed!(k) # seed
     # Booleans for which functions are active in the activation functions
     global c = [false, false, true, false] # exp layer 1, exp layer 2, div layer 1, div layer 2
@@ -383,14 +382,14 @@ function train_model(data_train, k, n_epochs, learning_rate, delta)
     training_params = Flux.params(model) # parameters to train
     opt = ADAM(learning_rate) # optimizer with learning rate
 
-    @printf "Loss before training: %.4f \n" loss(x_train, y_train) # loss before training
+    # @printf "Loss before training: %.4f \n" loss(x_train, y_train) # loss before training
     loss_train = zeros(n_epochs, 1)
-    @time for epoch = 1:n_epochs
+    for epoch = 1:n_epochs
 
         global epoch_loss = 0
-        if epoch % 1000 == 0 # print epoch
-            print("Epoch: ", epoch, "\n")
-        end
+        # if epoch % 1000 == 0 # print epoch
+        #     # print("Epoch: ", epoch, "\n")
+        # end
 
         train_nn!(loss, training_params, data_train, opt) # training
         loss_train[epoch] = epoch_loss
@@ -423,16 +422,17 @@ function train_multipleinit(data_train, learning_rate, n_epochs, n_success, seed
 
     k = seed
     while k <= max_interval && n_s < n_success
+        print("Initialization #",k-seed+1,".\t")
         c, model, loss_train = train_model(data_train, k, n_epochs, learning_rate, delta)
 
         if pruning == true # prune after training to size n_final
             c = prune(n_final, c)
         end
 
-        n_trainparams = sum(model[1].W_mask) + sum(model[3].W_mask) + sum(model[1].b_mask) + sum(model[3].b_mask) + sum(model[5].W_mask) + sum(model[5].b_mask) # number of training parameters
+        # n_trainparams = sum(model[1].W_mask) + sum(model[3].W_mask) + sum(model[1].b_mask) + sum(model[3].b_mask) + sum(model[5].W_mask) + sum(model[5].b_mask) # number of training parameters
 
-        print("Number of training parameters left: ", n_trainparams, "\n")
-        @printf "Loss after training: %.4f \n" loss(x_train, y_train) # loss after training
+        # print("Number of training parameters left: ", n_trainparams, "\n")
+        # @printf "Loss after training: %.4f \n" loss(x_train, y_train) # loss after training
 
         # Final model
         lossk = loss(x_train, y_train)
@@ -456,8 +456,8 @@ function train_multipleinit(data_train, learning_rate, n_epochs, n_success, seed
     n_trainparams = sum(model[1].W_mask) + sum(model[3].W_mask) + sum(model[1].b_mask) + sum(model[3].b_mask) + sum(model[5].W_mask) + sum(model[5].b_mask) # number of actual training parameters
 
     print("Final number of parameters: ", n_trainparams, "\n")
-    @printf "Loss after multiple initilisations: %.4f \n" loss(x_train, y_train) # loss after training
-    return model, loss_final, training_loss_final, c_final
+    @printf "Loss after multiple initilizations: %.4f \n" loss(x_train, y_train) # loss after training
+    return model, c_final
 
 end
 
@@ -472,7 +472,7 @@ function find_expr(c, max_V)
 
     expr = Meta.parse("$max_V" * "*(" * Y[1] * ")") # outmut multiplied with max v1
 
-    @printf "Expression: %s" string(expr)
+    @printf "%s" string(expr)
     return expr
 end
 
@@ -487,12 +487,12 @@ function fit_scatter(data_train, max_V)
     displai(p)
 end
 
-function fit_function(f, expr, V) # FIXME: add inputs?
+function fit_function(expr, V) # FIXME: add inputs?
     expr_1 = :(g(x_1, x_2) = $expr)
     eval(expr_1)
 
     if V == 1 # V1
-        p = scatter(sort(WGT), f.(sort(AGE), sort(WGT)), xlabel = "Weight (kg)", ylabel = "V1 (litres)", label = "True volume")
+        p = scatter(sort(WGT), fV1.(sort(AGE), sort(WGT)), xlabel = "Weight (kg)", ylabel = "V1 (litres)", label = "True volume")
         plot!(p, sort(WGT), g.(sort(AGE), sort(WGT)), label = "Predicted V1")
         return p
     elseif V == 2 # V2
