@@ -6,7 +6,8 @@ This repo provides code for the paper "Pharmacometric covariate modeling using s
 The package is written in Julia and can be downloaded by running
 
 ```
-Pkg.add(url="https://github.com/wahlquisty/pharmacometric-covariate-modeling.jl")
+using Pkg
+] add https://github.com/wahlquisty/pharmacometric-covariate-modeling
 ```
 
 ## Usage
