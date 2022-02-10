@@ -458,7 +458,6 @@ function train_multipleinit(data_train, learning_rate, n_epochs, n_success, seed
     print("Final number of parameters: ", n_trainparams, "\n")
     @printf "Loss after multiple initilizations: %.4f \n" loss(x_train, y_train) # loss after training
     return model, c_final
-
 end
 
 

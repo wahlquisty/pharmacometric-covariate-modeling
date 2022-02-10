@@ -98,7 +98,7 @@ lambda = 0 # parameter for L1 regularisation
 mu = 0 # parameter for logloss (amount)
 delta = 0 # limit for setting small weights and biases to zero
 
-@time model, loss_final, training_loss_final, c = train_multipleinit(data_train_V2, learning_rate, n_epochs, n_success, seed, delta, Inf, false)
+@time model, c = train_multipleinit(data_train_V2, learning_rate, n_epochs, n_success, seed, delta, 100, false)
 print("No restriction on parameters, expression for V2: ")
 exprV2 = find_expr(c, max_V2) # Find symbolic expression after training
 
