@@ -1,4 +1,4 @@
-name = "app"
+name = "CovariateModeling"
 uuid = "4edd50c2-f542-4358-a42c-1b3fd0500ca6"
 authors = ["Ylva Wahlquist <ylva.wahlquist@control.lth.se>"]
 version = "0.1.0"
